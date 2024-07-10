@@ -1,79 +1,72 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-const ProductInfo = () => {
-  const [productId, setProductId] = useState("");
-  const [productData, setProductData] = useState(null);
+const ProductInfo = ({ onSaveToFirestore }) => {
+  const [productUrl, setProductUrl] = useState("");
   const [error, setError] = useState("");
 
   const fetchProduct = async () => {
-    const options = {
-      method: "GET",
-      url: "https://vinted3.p.rapidapi.com/getProduct",
-      params: {
-        country: "us",
-        productId: productId,
-      },
-      headers: {
-        "x-rapidapi-key": "a99a7e3850msh2adf2fae5f4a5f6p1718b0jsne80cc5349420",
-        "x-rapidapi-host": "vinted3.p.rapidapi.com",
-      },
-    };
-
     try {
+      // Extrair o ID do URL do produto
+      const productId = extractProductIdFromUrl(productUrl);
+
+      // Verificar se o productId foi extraído corretamente
+      if (!productId) {
+        setError("URL do produto inválido. Por favor, insira um URL válido.");
+        return;
+      }
+
+      const options = {
+        method: "GET",
+        url: "https://vinted3.p.rapidapi.com/getProduct",
+        params: {
+          country: "us",
+          productId: productId,
+        },
+        headers: {
+          "x-rapidapi-key":
+            "a99a7e3850msh2adf2fae5f4a5f6p1718b0jsne80cc5349420",
+          "x-rapidapi-host": "vinted3.p.rapidapi.com",
+        },
+      };
+
       const response = await axios.request(options);
-      setProductData(response.data);
+      onSaveToFirestore(productUrl, response.data); // Envia o URL do produto e os dados para salvar na Firestore
       setError("");
     } catch (error) {
-      setError("Erro ao buscar o produto. Verifique o ID e tente novamente.");
-      setProductData(null);
+      setError("Erro ao buscar o produto. Verifique o URL e tente novamente.");
       console.error("Erro ao buscar o produto:", error);
     }
   };
 
-  const handleInputChange = (event) => {
-    setProductId(event.target.value);
+  const extractProductIdFromUrl = (url) => {
+    const match = url.match(/items\/(\d+)/);
+    return match ? match[1] : null;
   };
 
-  const handleSearchClick = () => {
-    fetchProduct();
+  const handleInputChange = (event) => {
+    setProductUrl(event.target.value);
+  };
+
+  const handleButtonClick = async () => {
+    await fetchProduct(); // Busca o produto e envia para a Firestore
   };
 
   return (
     <div>
-      <h2>Buscar Produto por ID</h2>
+      <h2>Buscar Produto por URL</h2>
       <div>
-        <label htmlFor="product-id">ID do Produto:</label>
+        <label htmlFor="product-url">URL do Produto:</label>
         <input
           type="text"
-          id="product-id"
-          value={productId}
+          id="product-url"
+          value={productUrl}
           onChange={handleInputChange}
-          placeholder="Insira o ID do produto"
+          placeholder="Insira o URL completo do produto"
         />
-        <button onClick={handleSearchClick}>Buscar</button>
+        <button onClick={handleButtonClick}>Buscar e Enviar</button>
       </div>
-
       {error && <p>{error}</p>}
-
-      {productData && (
-        <div>
-          <h3>{productData.title}</h3>
-          <div>
-            {productData.images.map((imageUrl, index) => (
-              <img
-                key={index}
-                src={imageUrl}
-                alt={`Imagem ${index}`}
-                style={{ maxWidth: "200px", marginRight: "10px" }}
-              />
-            ))}
-          </div>
-          <p>price:{productData.price.amount}</p>
-          <p>fees:{productData.price.fees}</p>
-          <p>total price:{productData.price.totalAmount}</p>
-        </div>
-      )}
     </div>
   );
 };
