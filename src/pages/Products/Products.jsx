@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 import { addDoc, collection } from "firebase/firestore";
-import { db } from "../../firebase"; // Assumindo que firebase.js está na pasta src
+import { db } from "../../firebase";
 
 const Products = () => {
-  const [productName, setProductName] = useState("");
-  const [productPrice, setProductPrice] = useState("");
+  const [message, setMessage] = useState("");
 
-  const saveDataToFirestore = async () => {
+  const saveMessageToFirestore = async () => {
     try {
-      const docRef = await addDoc(collection(db, "products"), {
-        productName,
-        productPrice,
+      const docRef = await addDoc(collection(db, "messages"), {
+        message,
       });
-      alert("Document written to Database");
+      alert("Message sent to Database");
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -22,21 +20,13 @@ const Products = () => {
     <div>
       <h1>Produtos</h1>
       <p>Lista de produtos...</p>
-
-      <h1>Save Data to Firebase Firestore</h1>
       <input
         type="text"
-        value={productName}
-        onChange={(e) => setProductName(e.target.value)}
-        placeholder="Product Name"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Your message"
       />
-      <input
-        type="text"
-        value={productPrice}
-        onChange={(e) => setProductPrice(e.target.value)}
-        placeholder="Product Price"
-      />
-      <button onClick={saveDataToFirestore}>Save to Firestore</button>
+      <button onClick={saveMessageToFirestore}>Send Message</button>
     </div>
   );
 };
