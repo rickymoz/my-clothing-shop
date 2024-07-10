@@ -7,7 +7,6 @@
   flex: 1;
   max-width: calc(33% - 1rem);
   box-sizing: border-box;
-  min-height: 100vh;
 }
 
 .product-title {
