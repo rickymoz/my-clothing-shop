@@ -1,32 +1,34 @@
 import React, { useState } from "react";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../../firebase";
+import ProductInfo from "../../components/ProductInfo/ProductInfo";
 
 const Products = () => {
-  const [message, setMessage] = useState("");
+  const [productUrl, setProductUrl] = useState("");
+  const [productData, setProductData] = useState(null);
+  const [error, setError] = useState("");
 
-  const saveMessageToFirestore = async () => {
+  const saveProductToFirestore = async (url, data) => {
     try {
-      const docRef = await addDoc(collection(db, "messages"), {
-        message,
+      const { title, images, price } = data;
+      const docRef = await addDoc(collection(db, "products"), {
+        productTitle: title,
+        productImages: images,
+        productPrice: price.amount, // Supondo que você queira apenas o valor do preço
+        productUrl: url, // Salva o URL do produto na Firestore
       });
-      alert("Message sent to Database");
+      alert("Produto enviado para o banco de dados");
     } catch (e) {
-      console.error("Error adding document: ", e);
+      setError("Erro ao adicionar o produto: " + e.message);
+      console.error("Erro ao adicionar o produto: ", e);
     }
   };
 
   return (
     <div>
       <h1>Produtos</h1>
-      <p>Lista de produtos...</p>
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Your message"
-      />
-      <button onClick={saveMessageToFirestore}>Send Message</button>
+      <ProductInfo onSaveToFirestore={saveProductToFirestore} />
+      {error && <p>{error}</p>}
     </div>
   );
 };
