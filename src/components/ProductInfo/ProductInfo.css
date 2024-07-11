@@ -1,0 +1,66 @@
+.product-info {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  max-width: 600px;
+  margin: 20px auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.product-info h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.input-group label {
+  font-size: 1rem;
+  color: #555;
+}
+
+.input-group input {
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+}
+
+.input-group input:focus {
+  border-color: #007bff;
+}
+
+.input-group button {
+  padding: 10px;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.input-group button:hover {
+  background-color: #0056b3;
+}
+
+.input-group button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.error-text {
+  color: #ff0000;
+  text-align: center;
+  margin-top: 10px;
+}
