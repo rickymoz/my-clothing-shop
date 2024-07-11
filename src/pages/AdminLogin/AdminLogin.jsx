@@ -9,7 +9,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuth } from "../../contexts/AuthContext/AuthContext";
 import "./AdminLogin.css";
 
 const generateToken = () => {
