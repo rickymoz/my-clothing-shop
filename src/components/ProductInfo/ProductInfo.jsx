@@ -1,17 +1,21 @@
 import React, { useState } from "react";
 import axios from "axios";
+import "./ProductInfo.css";
 
 const ProductInfo = ({ onSaveToFirestore }) => {
   const [productUrl, setProductUrl] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const fetchProduct = async () => {
+    setLoading(true);
+    setError("");
+
     try {
-      // Extrair o ID do URL do produto
       const productId = extractProductIdFromUrl(productUrl);
 
-      // Verificar se o productId foi extraído corretamente
       if (!productId) {
+        setLoading(false);
         setError("URL do produto inválido. Por favor, insira um URL válido.");
         return;
       }
@@ -31,9 +35,11 @@ const ProductInfo = ({ onSaveToFirestore }) => {
       };
 
       const response = await axios.request(options);
-      onSaveToFirestore(productUrl, response.data); // Envia o URL do produto e os dados para salvar na Firestore
+      onSaveToFirestore(productUrl, response.data);
+      setLoading(false);
       setError("");
     } catch (error) {
+      setLoading(false);
       setError("Erro ao buscar o produto. Verifique o URL e tente novamente.");
       console.error("Erro ao buscar o produto:", error);
     }
@@ -49,13 +55,13 @@ const ProductInfo = ({ onSaveToFirestore }) => {
   };
 
   const handleButtonClick = async () => {
-    await fetchProduct(); // Busca o produto e envia para a Firestore
+    await fetchProduct();
   };
 
   return (
-    <div>
+    <div className="product-info">
       <h2>Buscar Produto por URL</h2>
-      <div>
+      <div className="input-group">
         <label htmlFor="product-url">URL do Produto:</label>
         <input
           type="text"
@@ -64,9 +70,11 @@ const ProductInfo = ({ onSaveToFirestore }) => {
           onChange={handleInputChange}
           placeholder="Insira o URL completo do produto"
         />
-        <button onClick={handleButtonClick}>Buscar e Enviar</button>
+        <button onClick={handleButtonClick} disabled={loading}>
+          {loading ? "Buscando..." : "Buscar e Enviar"}
+        </button>
       </div>
-      {error && <p>{error}</p>}
+      {error && <p className="error-text">{error}</p>}
     </div>
   );
 };
