@@ -1,8 +1,20 @@
-import React, { useState } from "react";
-import { addDoc, getDocs, collection, query, where } from "firebase/firestore";
+import React, { useState, useEffect } from "react";
+import {
+  addDoc,
+  getDocs,
+  collection,
+  query,
+  where,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../../firebase";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../contexts/AuthContext";
 import "./AdminLogin.css";
+
+const generateToken = () => {
+  return `${Math.random().toString(36).substr(2)}${Date.now().toString(36)}`;
+};
 
 const AdminLogin = () => {
   const [isRegister, setIsRegister] = useState(false);
@@ -10,11 +22,31 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const { isLoggedIn, login } = useAuth();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/admin");
+    }
+  }, [isLoggedIn, navigate]);
 
   const handleRegister = async () => {
     try {
-      await addDoc(collection(db, "users"), { email, password });
-      setMessage("User registered successfully");
+      const userQuery = query(
+        collection(db, "users"),
+        where("email", "==", email)
+      );
+      const userSnapshot = await getDocs(userQuery);
+
+      if (!userSnapshot.empty) {
+        setMessage("User already exists. Please login.");
+        return;
+      }
+
+      const token = generateToken();
+      await addDoc(collection(db, "users"), { email, password, token });
+      setMessage("User registered successfully. You can now login.");
+      setIsRegister(false);
     } catch (error) {
       setMessage("Error registering user: " + error.message);
     }
@@ -30,6 +62,13 @@ const AdminLogin = () => {
       const userSnapshot = await getDocs(userQuery);
 
       if (!userSnapshot.empty) {
+        const userDoc = userSnapshot.docs[0];
+        const userData = userDoc.data();
+        const newToken = generateToken();
+
+        await updateDoc(userDoc.ref, { token: newToken });
+        localStorage.setItem("authToken", newToken);
+        login();
         navigate("/admin");
       } else {
         setMessage("Invalid email or password");

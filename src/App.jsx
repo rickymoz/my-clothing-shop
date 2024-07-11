@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
 import FrontPage from "./pages/FrontPage/FrontPage";
 import Products from "./pages/Products/Products";
 import About from "./pages/About/About";
@@ -12,20 +13,22 @@ import "./App.css";
 
 function App() {
   return (
-    <div className="app-container">
-      <Header />
-      <div className="content-wrap">
-        <Routes>
-          <Route path="/" element={<FrontPage />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-        </Routes>
+    <AuthProvider>
+      <div className="app-container">
+        <Header />
+        <div className="content-wrap">
+          <Routes>
+            <Route path="/" element={<FrontPage />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+          </Routes>
+        </div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
+    </AuthProvider>
   );
 }
 
