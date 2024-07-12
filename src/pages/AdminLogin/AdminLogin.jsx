@@ -10,6 +10,8 @@ import {
 import { db } from "../../firebase";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext/AuthContext";
+import bcrypt from "bcryptjs";
+import { Shield } from "lucide-react";
 import "./AdminLogin.css";
 
 const generateToken = () => {
@@ -17,10 +19,9 @@ const generateToken = () => {
 };
 
 const AdminLogin = () => {
-  const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [loginError, setLoginError] = useState("");
   const navigate = useNavigate();
   const { isLoggedIn, login } = useAuth();
 
@@ -30,6 +31,10 @@ const AdminLogin = () => {
     }
   }, [isLoggedIn, navigate]);
 
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
+  };
+
   const handleRegister = async () => {
     try {
       const userQuery = query(
@@ -37,83 +42,88 @@ const AdminLogin = () => {
         where("email", "==", email)
       );
       const userSnapshot = await getDocs(userQuery);
-
       if (!userSnapshot.empty) {
-        setMessage("User already exists. Please login.");
+        setLoginError("User already exists. Please login.");
         return;
       }
-
+      const salt = bcrypt.genSaltSync(10);
+      const hashedPassword = bcrypt.hashSync(password, salt);
       const token = generateToken();
-      await addDoc(collection(db, "users"), { email, password, token });
-      setMessage("User registered successfully. You can now login.");
-      setIsRegister(false);
+      await addDoc(collection(db, "users"), {
+        email,
+        password: hashedPassword,
+        token,
+      });
+      setLoginError("User registered successfully. You can now login.");
     } catch (error) {
-      setMessage("Error registering user: " + error.message);
+      setLoginError("Error registering user: " + error.message);
     }
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoginError("");
+
     try {
       const userQuery = query(
         collection(db, "users"),
-        where("email", "==", email),
-        where("password", "==", password)
+        where("email", "==", email)
       );
       const userSnapshot = await getDocs(userQuery);
-
       if (!userSnapshot.empty) {
         const userDoc = userSnapshot.docs[0];
         const userData = userDoc.data();
-        const newToken = generateToken();
 
-        await updateDoc(userDoc.ref, { token: newToken });
-        localStorage.setItem("authToken", newToken);
-        login();
-        navigate("/admin");
+        if (bcrypt.compareSync(password, userData.password)) {
+          const newToken = generateToken();
+          await updateDoc(userDoc.ref, { token: newToken });
+          localStorage.setItem("authToken", newToken);
+          login();
+          navigate("/admin");
+        } else {
+          setLoginError("Invalid credentials");
+        }
       } else {
-        setMessage("Invalid email or password");
+        setLoginError("Invalid credentials");
       }
     } catch (error) {
-      setMessage("Error logging in: " + error.message);
+      setLoginError("Error logging in: " + error.message);
     }
   };
 
   return (
     <div className="admin-container">
-      <h1>{isRegister ? "REGISTER" : "LOGIN"}</h1>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          isRegister ? handleRegister() : handleLogin();
-        }}
-      >
-        <div>
-          <label>Email</label>
+      <h1 className="admin-title">
+        ADMIN <Shield size={20} color="#4338ca" />
+      </h1>
+      <p className="admin-warning">
+        This page is for authorized administrators only. User accounts cannot
+        log in here.
+      </p>
+      <form onSubmit={handleLogin}>
+        <div className="input-group">
+          <label htmlFor="user">Email</label>
           <input
-            type="email"
+            id="user"
+            type="text"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleEmailChange}
             required
           />
         </div>
-        <div>
-          <label>Password</label>
+        <div className="input-group">
+          <label htmlFor="password">Password</label>
           <input
+            id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
-        <button type="submit">{isRegister ? "Register" : "Login"}</button>
+        {loginError && <p className="error-message">{loginError}</p>}
+        <button type="submit">Login</button>
       </form>
-      <button
-        className="switch-button"
-        onClick={() => setIsRegister(!isRegister)}
-      >
-        {isRegister ? "Switch to Login" : "Switch to Register"}
-      </button>
-      {message && <p>{message}</p>}
     </div>
   );
 };

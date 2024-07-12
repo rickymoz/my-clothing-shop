@@ -38,10 +38,10 @@ const Nav = () => {
     <nav className="nav">
       <ul className="nav-list">
         {[
-          { name: "Inicio", path: "/" },
-          { name: "Productos", path: "/products" },
-          { name: "Sobre", path: "/about" },
-          { name: "Contacto", path: "/contact" },
+          { name: "Home", path: "/" },
+          { name: "Products", path: "/products" },
+          { name: "About", path: "/about" },
+          { name: "Contact", path: "/contact" },
         ].map((item) => (
           <li key={item.name} className="nav-item">
             <Link to={item.path} className="nav-link">
