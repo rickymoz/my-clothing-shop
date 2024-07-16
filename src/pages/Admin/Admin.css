@@ -1,42 +1,73 @@
-.admin-page {
-  padding: 20px;
-  font-family: Arial, sans-serif;
-}
-
-.admin-mode-warning {
-  background-color: rgb(222, 135, 42);
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-}
-
-.warning-text {
-  font-size: 2rem;
-  text-align: center;
-  color: white;
+/* Admin.css */
+body {
   margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f0f2f5;
 }
 
-h1 {
-  text-align: center;
+.admin-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.admin-steps {
+  display: flex;
+  justify-content: center;
   margin-bottom: 20px;
+}
+
+.admin-step {
+  width: 60px;
+  height: 60px;
+  background-color: #3498db;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  margin: 0 20px;
+  cursor: pointer;
+  position: relative;
+}
+
+.admin-step::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  width: 60px;
+  height: 2px;
+  background-color: #3498db;
+  transform: translateY(-50%);
+}
+
+.admin-step:last-child::after {
+  content: none;
+}
+
+.admin-content {
+  width: 100%;
+  max-width: 600px;
+  background: #fff;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.admin-content h3 {
+  margin-bottom: 20px;
+  font-size: 24px;
   color: #333;
-}
-
-.loading-text {
-  font-size: 1.2rem;
-  color: #007bff;
   text-align: center;
 }
 
-.error-text {
-  font-size: 1.2rem;
-  color: #ff0000;
-  text-align: center;
-}
-
-.success-text {
-  font-size: 1.2rem;
-  color: #28a745;
-  text-align: center;
+.admin-card {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

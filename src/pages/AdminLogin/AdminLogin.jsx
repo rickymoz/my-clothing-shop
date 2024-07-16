@@ -97,8 +97,8 @@ const AdminLogin = () => {
         ADMIN <Shield size={20} color="#4338ca" />
       </h1>
       <p className="admin-warning">
-        This page is for authorized administrators only. User accounts cannot
-        log in here.
+        This page is for authorized administrators only. Visitors cannot log in
+        here.
       </p>
       <form onSubmit={handleLogin}>
         <div className="input-group">
@@ -124,6 +124,28 @@ const AdminLogin = () => {
         {loginError && <p className="error-message">{loginError}</p>}
         <button type="submit">Login</button>
       </form>
+      <div className="register off">
+        <h2>Register</h2>
+        <div className="input-group">
+          <label htmlFor="register-email">Email</label>
+          <input
+            id="register-email"
+            type="text"
+            value={email}
+            onChange={handleEmailChange}
+          />
+        </div>
+        <div className="input-group">
+          <label htmlFor="register-password">Password</label>
+          <input
+            id="register-password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <button onClick={handleRegister}>Register</button>
+      </div>
     </div>
   );
 };
