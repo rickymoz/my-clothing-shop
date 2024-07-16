@@ -5,16 +5,11 @@ import ProductInfo from "../../components/ProductInfo/ProductInfo";
 import "./Admin.css";
 
 const AdminPage = () => {
-  const [productUrl, setProductUrl] = useState("");
-  const [productData, setProductData] = useState(null);
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
+  const [currentStep, setCurrentStep] = useState(1);
 
   const saveProductToFirestore = async (url, data) => {
     setLoading(true);
-    setError("");
-    setSuccessMessage("");
     try {
       const { title, images, price } = data;
       await addDoc(collection(db, "products"), {
@@ -24,24 +19,53 @@ const AdminPage = () => {
         productUrl: url,
       });
       setLoading(false);
-      setSuccessMessage("Produto enviado para o banco de dados com sucesso!");
     } catch (e) {
       setLoading(false);
-      setError("Erro ao adicionar o produto: " + e.message);
-      console.error("Erro ao adicionar o produto: ", e);
+    }
+  };
+
+  const renderContent = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <div className="admin-card">
+            <h3>ADD PRODUCT</h3>
+            <ProductInfo onSaveToFirestore={saveProductToFirestore} />
+          </div>
+        );
+      case 2:
+        return (
+          <div className="admin-card">
+            <h3>ANOTHER STEP</h3>
+            <ProductInfo onSaveToFirestore={saveProductToFirestore} />
+          </div>
+        );
+      case 3:
+        return (
+          <div className="admin-card">
+            <h3>YET ANOTHER STEP</h3>
+            <ProductInfo onSaveToFirestore={saveProductToFirestore} />
+          </div>
+        );
+      default:
+        return null;
     }
   };
 
   return (
     <div className="admin-page">
-      <div className="admin-mode-warning">
-        <p className="warning-text">ESTÁS EN LA CONFIGURACION DE LA PÁGINA!</p>
+      <div className="admin-steps">
+        <div className="admin-step" onClick={() => setCurrentStep(1)}>
+          1
+        </div>
+        <div className="admin-step" onClick={() => setCurrentStep(2)}>
+          2
+        </div>
+        <div className="admin-step" onClick={() => setCurrentStep(3)}>
+          3
+        </div>
       </div>
-      <h1>ADMIN - CONTROL PANEL</h1>
-      <ProductInfo onSaveToFirestore={saveProductToFirestore} />
-      {loading && <p className="loading-text">Salvando produto...</p>}
-      {error && <p className="error-text">{error}</p>}
-      {successMessage && <p className="success-text">{successMessage}</p>}
+      <div className="admin-content">{renderContent()}</div>
     </div>
   );
 };
