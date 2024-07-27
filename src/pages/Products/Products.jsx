@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
+import ProductCard from "../../components/ProductCard/ProductCard";
+import "./Products.css";
 
 const Products = () => {
+  const [admin, setAdmin] = useState(false);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +24,6 @@ const Products = () => {
         setLoading(false);
       }
     };
-
     fetchProducts();
   }, []);
 
@@ -30,50 +32,27 @@ const Products = () => {
   }
 
   return (
-    <div>
+    <div className="products-container">
       <h1>Lista de Produtos</h1>
+      <button onClick={() => setAdmin(!admin)}>
+        {admin ? "Switch to User Mode" : "Switch to Admin Mode"}
+      </button>
       {products.length === 0 ? (
         <p>Nenhum produto encontrado.</p>
       ) : (
-        <ul>
+        <div className="product-list">
           {products.map((product) => (
-            <li key={product.id}>
-              <h3>{product.productTitle}</h3>
-              <p>
-                URL do produto:{" "}
-                <a
-                  href={product.productUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  link
-                </a>
-              </p>
-              <div>
-                <p>Preço: R${product.productPrice}</p>
-                {product.productImages.length > 0 && (
-                  <div>
-                    <p>Imagens:</p>
-                    <div style={{ display: "flex" }}>
-                      {product.productImages.map((imageUrl, index) => (
-                        <img
-                          key={index}
-                          src={imageUrl}
-                          alt={`Imagem ${index + 1}`}
-                          style={{
-                            maxWidth: "200px",
-                            maxHeight: "200px",
-                            marginRight: "10px",
-                          }}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </li>
+            <ProductCard
+              key={product.id}
+              name={product.productTitle}
+              image={product.productImages[0] || ""}
+              price={product.productPrice}
+              oldPrice={product.productOldPrice}
+              isAdmin={admin}
+              onSale={product.onSale || false}
+            />
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

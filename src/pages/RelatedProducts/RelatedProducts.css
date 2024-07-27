@@ -1,0 +1,10 @@
+.related-products {
+  text-align: center;
+}
+
+.products-grid {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}

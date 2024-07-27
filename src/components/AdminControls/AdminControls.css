@@ -1,0 +1,35 @@
+.admin-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.delete-button .delete-icon {
+  color: red;
+}
+
+.add-button .add-icon {
+  color: green;
+}
+
+.edit-button .edit-icon {
+  color: blue;
+}
+
+.admin-button:hover .delete-icon {
+  color: darkred;
+}
+
+.admin-button:hover .add-icon {
+  color: darkgreen;
+}
+
+.admin-button:hover .edit-icon {
+  color: darkblue;
+}

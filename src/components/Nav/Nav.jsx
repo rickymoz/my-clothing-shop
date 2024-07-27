@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShieldEllipsis, LogOut, Wrench, KeyRound } from "lucide-react";
+import { ShieldEllipsis, LogOut, KeyRound } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext/AuthContext";
 import "./Nav.css";
 
@@ -60,14 +60,14 @@ const Nav = () => {
               <div className="admin-dropdown">
                 {isLoggedIn ? (
                   <>
-                    <Link
+                    {/* <Link
                       to="/admin"
                       className="dropdown-link"
                       onClick={() => setIsAdminDropdownOpen(false)}
                     >
                       <Wrench size={16} />
                       Control Panel
-                    </Link>
+                    </Link> */}
                     <button onClick={handleLogout} className="dropdown-link">
                       <LogOut size={16} /> Logout
                     </button>

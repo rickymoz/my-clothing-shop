@@ -79,7 +79,7 @@ const AdminLogin = () => {
           await updateDoc(userDoc.ref, { token: newToken });
           localStorage.setItem("authToken", newToken);
           login();
-          navigate("/admin");
+          navigate("/products");
         } else {
           setLoginError("Invalid credentials");
         }
